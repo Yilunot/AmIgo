@@ -1,46 +1,56 @@
-import speech_recognition as sr
-import pyttsx3
 import os
+import openai
 import gradio as gr
 from dotenv import load_dotenv
+
+# Load environment variables from .env file
 load_dotenv()
 OPENAI_KEY = os.getenv('OPENAI_KEY')
 
 if not OPENAI_KEY:
     raise ValueError("OpenAI API key is missing. Please set it in the .env file.")
 
-import openai
+# Set the OpenAI API key
 openai.api_key = OPENAI_KEY
 
+# Initialize messages with system context
 messages = [{"role": "system", "content": "Mental Health Chatbot"}]
 
-def CustomChatGPT(Me):
-    messages.append({"role": "user", "content": Me})
+def CustomChatGPT(user_input, chat_history):
+    # Append the user's message to the messages
+    messages.append({"role": "user", "content": user_input})
+    
+    # Call the OpenAI API for a response
     response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo",
-        max_tokens =50,
+        max_tokens = 50,
         messages = messages
-        
     )
-    ChatGPT_reply = response["choices"][0]["message"]["content"]
-    messages.append({"role": "assistant", "content": ChatGPT_reply})
-    return ChatGPT_reply
+    
+    # Get the response from the assistant
+    assistant_reply = response["choices"][0]["message"]["content"]
+    
+    # Append the assistant's message to the messages and chat history
+    messages.append({"role": "assistant", "content": assistant_reply})
+    chat_history.append((user_input, assistant_reply))
+    
+    return chat_history, chat_history
 
-# Modify Gradio interface using Blocks to structure the layout
+# Gradio interface using Blocks to structure the layout
 with gr.Blocks() as demo:
     gr.Markdown("# Mental Health Chatbot")
     
+    # Chatbot component for displaying chat history
+    chatbot = gr.Chatbot(label="Chat History")
+    
     # Input box where the user types their message
     user_input = gr.Textbox(label="Your Input", placeholder="Type your message here...", lines=4)
-    
-    # Output box where the chatbot response will be displayed
-    chatbot_output = gr.Textbox(label="Chat-bot Response", placeholder="Chat-bot response will appear here...", lines=4)
     
     # Button to submit the message
     submit_button = gr.Button("Submit")
     
     # Define how the button links the input and output
-    submit_button.click(fn=CustomChatGPT, inputs=user_input, outputs=chatbot_output)
-
+    submit_button.click(fn=CustomChatGPT, inputs=[user_input, chatbot], outputs=[chatbot, chatbot])
+    
 # Launch the interface with the 'share' option enabled
 demo.launch(share=True)
