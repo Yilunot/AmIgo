@@ -11,7 +11,7 @@ if not OPENAI_KEY:
     raise ValueError("OpenAI API key is missing. Please set it in the .env file.")
 
 # Set the OpenAI API key
-openai.api_key = OPENAI_KEY
+openai.api_key = OPENAI_KEY 
 
 # Initialize messages with system context and an introductory message
 messages = [
@@ -40,7 +40,7 @@ def CustomChatGPT(user_input, chat_history):
     messages.append({"role": "assistant", "content": assistant_reply})
     chat_history.append((user_input, assistant_reply))
     
-    return chat_history, chat_history
+    return chat_history, ""
 
 # Gradio interface using Blocks to structure the layout
 with gr.Blocks() as demo:
@@ -56,7 +56,10 @@ with gr.Blocks() as demo:
     submit_button = gr.Button("Submit")
     
     # Define how the button links the input and output
-    submit_button.click(fn=CustomChatGPT, inputs=[user_input, chatbot], outputs=[chatbot, chatbot])
+    submit_button.click(fn=CustomChatGPT, inputs=[user_input, chatbot], outputs=[chatbot, user_input])
+    
+    # Set up submission with Enter key
+    user_input.submit(fn=CustomChatGPT, inputs=[user_input, chatbot], outputs=[chatbot, user_input])
     
 # Launch the interface with the 'share' option enabled
 demo.launch(share=True)
