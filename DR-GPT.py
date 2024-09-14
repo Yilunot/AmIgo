@@ -13,8 +13,14 @@ if not OPENAI_KEY:
 # Set the OpenAI API key
 openai.api_key = OPENAI_KEY
 
-# Initialize messages with system context
-messages = [{"role": "system", "content": "Mental Health Chatbot"}]
+# Initialize messages with system context and an introductory message
+messages = [
+    {"role": "system", "content": "Mental Health Chatbot"},
+    {"role": "assistant", "content": "Hello! I am Dr. GPT, your mental health assistant. For legal reasons, I must claim that I am not a certified doctor. How can I help you today?"}
+]
+
+# Initialize chat history with the introductory message
+initial_chat = [("", "Hello! I am your Dr. Gpt, your mental health assistant. For legal reasons, I must claim that I am not a certified doctor. How can I help you today?")]
 
 def CustomChatGPT(user_input, chat_history):
     # Append the user's message to the messages
