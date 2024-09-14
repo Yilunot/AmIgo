@@ -2,7 +2,7 @@
 Mental heath chat bot with ChatGPT integration
 
 TEAM MEMBERS:
-Alejandro Gonzales|
-Tony Liu|
-Alex Castillo|
+Alejandro Gonzales |
+Tony Liu |
+Alex Castillo |
 Ricky Martinez
